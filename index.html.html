@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Quieres quedar conmigo? 🌸</title>
+  
+  <!-- Estilos de Flatpickr (Calendario Integrado) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_pink.css">
+  
+  <style>
+    /* Fondo Degradado Suave */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffe6e9 0%, #fff0f3 100%);
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Tarjeta Principal */
+    .card {
+      background-color: #ffffff;
+      padding: 35px 25px;
+      border-radius: 30px;
+      box-shadow: 0 15px 35px rgba(211, 47, 47, 0.1);
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      border: 2px solid #ffcdd2;
+      position: relative;
+    }
+
+    /* Títulos */
+    h1 {
+      color: #b71c1c;
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .card h2 {
+      color: #d32f2f;
+      font-size: 1.7rem;
+      margin-top: 0;
+      margin-bottom: 5px;
+    }
+
+    .card p {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 15px;
+    }
+
+    /* Contenedor de Botones (Primera Pantalla) */
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      position: relative;
+      min-height: 70px;
+      margin-top: 20px;
+    }
+
+    /* Botones 'Sí' y 'No' */
+    button {
+      padding: 15px 35px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    #btn-si {
+      background-color: #43a047;
+      color: white;
+    }
+
+    #btn-si:hover {
+      background-color: #388e3c;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    #btn-no {
+      background-color: #ef5350;
+      color: white;
+      position: absolute;
+    }
+
+    /* Estilo del Calendario Incrustado */
+    #mensaje-exito, #pantalla-comida, #pantalla-final {
+      display: none;
+    }
+
+    .flatpickr-calendar.inline {
+      margin: 0 auto 15px auto;
+      box-shadow: none;
+      border: 1px solid #ffcdd2;
+      border-radius: 15px;
+    }
+
+    /* Selector de Horas y Comidas */
+    .titulo-seccion {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #b71c1c;
+      margin: 15px 0 10px 0;
+    }
+
+    .horas-grid, .comidas-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-opcion {
+      padding: 12px 15px;
+      font-size: 1rem;
+      font-weight: 500;
+      background-color: #fff5f7;
+      color: #d32f2f;
+      border: 2px solid #ffcdd2;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-opcion:hover {
+      background-color: #ffe0e6;
+    }
+
+    .btn-opcion.seleccionada {
+      background-color: #e91e63;
+      color: white;
+      border-color: #e91e63;
+    }
+
+    /* Botones de Siguiente y Confirmación */
+    .btn-siguiente {
+      background-color: #e91e63;
+      color: white;
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      border-radius: 25px;
+      margin-top: 5px;
+    }
+
+    .btn-siguiente:hover {
+      background-color: #c2185b;
+      transform: translateY(-2px);
+    }
+
+    /* Estilos del resumen dividido por renglones */
+    .resumen-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 25px;
+      text-align: left;
+      background-color: #fff5f7;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid #ffcdd2;
+    }
+
+    .resumen-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #b71c1c;
+    }
+
+    .resumen-item span.icono {
+      font-size: 1.5rem;
+    }
+
+    /* Flores Flotantes */
+    .flor-flotante {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: flotar 3s infinite ease-in-out;
+      opacity: 0.8;
+    }
+
+    @keyframes flotar {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+      50% { transform: translateY(-20px) rotate(20deg); opacity: 1; }
+      100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Primera Tarjeta: Pregunta -->
+  <div class="card" id="pregunta-card">
+    <span class="flor-flotante" style="top: 15px; left: 20px; animation-delay: 0s;">🌸</span>
+    <span class="flor-flotante" style="top: 10px; right: 25px; animation-delay: 0.5s;">🌸</span>
+    <span class="flor-flotante" style="bottom: 20px; left: 30px; animation-delay: 1s;">🌸</span>
+
+    <h1>¿Quieres quedar conmigo?</h1>
+    
+    <div class="btn-container">
+      <button id="btn-si">¡SÍ!</button>
+      <button id="btn-no">No 🥺</button>
+    </div>
+  </div>
+
+  <!-- Segunda Tarjeta: Calendario + Horas -->
+  <div class="card" id="mensaje-exito">
+    <h2>¡Sabía que dirías que sí! 🌸✨</h2>
+    <p>Entonces, ¿cuándo estás libre?</p>
+    
+    <div id="calendario-inline"></div>
+    
+    <div class="titulo-seccion">¿A qué hora te va mejor?</div>
+    <div class="horas-grid">
+      <button type="button" class="btn-opcion btn-hora" onclick="seleccionarHora(this)">17:00 hs</button>
+      <button type="button" class="btn-opcion btn-hora" onclick="seleccionarHora(this)">18:00 hs</button>
+      <button type="button" class="btn-opcion btn-hora" onclick="seleccionarHora(this)">19:00 hs</button>
+      <button type="button" class="btn-opcion btn-hora" onclick="seleccionarHora(this)">20:00 hs</button>
+      <button type="button" class="btn-opcion btn-hora" onclick="seleccionarHora(this)">21:00 hs</button>
+    </div>
+    
+    <button id="btn-ir-comida" class="btn-siguiente">Siguiente ➡️</button>
+  </div>
+
+  <!-- Tercera Tarjeta: Elección de Comida -->
+  <div class="card" id="pantalla-comida">
+    <h2>¿Qué es lo que más te apetece hoy? 😋</h2>
+    <p>Elige tu plan perfecto:</p>
+    
+    <div class="comidas-grid">
+      <button type="button" class="btn-opcion btn-comida" onclick="seleccionarComida(this)">Sushi 🍣</button>
+      <button type="button" class="btn-opcion btn-comida" onclick="seleccionarComida(this)">Pizza 🍕</button>
+      <button type="button" class="btn-opcion btn-comida" onclick="seleccionarComida(this)">Hamburguesa 🍔</button>
+      <button type="button" class="btn-opcion btn-comida" onclick="seleccionarComida(this)">Pasta 🍝</button>
+    </div>
+    
+    <button type="button" class="btn-opcion btn-comida" style="width: 100%; margin-bottom: 20px;" onclick="seleccionarComida(this)">Eliges tú 🔮✨</button>
+    
+    <button id="btn-confirmar-final" class="btn-siguiente">Confirmar cita 💌</button>
+  </div>
+
+  <!-- Cuarta Tarjeta: Confirmación Final Dividida por Renglones -->
+  <div class="card" id="pantalla-final">
+    <h2>¡Planazo confirmado! 🎉🌸</h2>
+    
+    <div class="resumen-lista">
+      <div class="resumen-item">
+        <span class="icono">📅</span>
+        <span id="resumen-fecha"></span>
+      </div>
+      <div class="resumen-item">
+        <span class="icono">⏰</span>
+        <span id="resumen-hora"></span>
+      </div>
+      <div class="resumen-item">
+        <span class="icono" id="resumen-icono-comida">🍽️</span>
+        <span id="resumen-comida"></span>
+      </div>
+    </div>
+
+    <p style="font-size: 3rem; margin-top: 20px; margin-bottom: 0;">🥂✨</p>
+  </div>
+
+  <!-- Scripts para el Calendario -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+  <script>
+    const btnNo = document.getElementById('btn-no');
+    const btnSi = document.getElementById('btn-si');
+    const preguntaCard = document.getElementById('pregunta-card');
+    const mensajeExito = document.getElementById('mensaje-exito');
+    const pantallaComida = document.getElementById('pantalla-comida');
+    const pantallaFinal = document.getElementById('pantalla-final');
+    
+    const btnIrComida = document.getElementById('btn-ir-comida');
+    const btnConfirmarFinal = document.getElementById('btn-confirmar-final');
+
+    let fechaElegida = "";
+    let horaElegida = "";
+    let comidaElegida = "";
+
+    function esquivar() {
+      const padding = 20;
+      const maxX = window.innerWidth - btnNo.offsetWidth - padding;
+      const maxY = window.innerHeight - btnNo.offsetHeight - padding;
+
+      const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+      btnNo.style.position = 'fixed';
+      btnNo.style.left = `${randomX}px`;
+      btnNo.style.top = `${randomY}px`;
+      btnNo.style.transform = `scale(${0.9 + Math.random() * 0.2})`;
+    }
+
+    btnNo.addEventListener('mouseover', esquivar);
+    btnNo.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      esquivar();
+    });
+
+    btnSi.addEventListener('click', () => {
+      preguntaCard.style.display = 'none';
+      mensajeExito.style.display = 'block';
+
+      flatpickr("#calendario-inline", {
+        inline: true,
+        locale: "es",
+        minDate: "today",
+        dateFormat: "d/m/Y",
+        onChange: function(selectedDates, dateStr) {
+          fechaElegida = dateStr;
+        }
+      });
+    });
+
+    function seleccionarHora(boton) {
+      document.querySelectorAll('.btn-hora').forEach(btn => btn.classList.remove('seleccionada'));
+      boton.classList.add('seleccionada');
+      horaElegida = boton.innerText;
+    }
+
+    function seleccionarComida(boton) {
+      document.querySelectorAll('.btn-comida').forEach(btn => btn.classList.remove('seleccionada'));
+      boton.classList.add('seleccionada');
+      comidaElegida = boton.innerText;
+    }
+
+    btnIrComida.addEventListener('click', () => {
+      if (!fechaElegida) {
+        alert("Por favor, selecciona un día en el calendario 🌸");
+        return;
+      }
+      if (!horaElegida) {
+        alert("Por favor, elige una hora para quedar ⏰");
+        return;
+      }
+      
+      mensajeExito.style.display = 'none';
+      pantallaComida.style.display = 'block';
+    });
+
+    // Envío por correo usando Formspree y muestra del resumen en renglones
+    btnConfirmarFinal.addEventListener('click', () => {
+      if (!comidaElegida) {
+        alert("Por favor, elige qué te apetece comer 🍕🍣");
+        return;
+      }
+
+      btnConfirmarFinal.innerText = "Enviando...";
+      btnConfirmarFinal.disabled = true;
+
+      // REEMPLAZA ESTE ENLACE CON EL QUE TE DÉ FORMSPREE:
+      const formspreeUrl = "https://formspree.io/f/xljejqge";
+
+      fetch(formspreeUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fecha: fechaElegida,
+          hora: horaElegida,
+          comida: comidaElegida
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          mostrarPantallaFinal();
+        } else {
+          alert("Hubo un pequeño error al enviar. ¡Pruébalo de nuevo!");
+          btnConfirmarFinal.innerText = "Confirmar cita 💌";
+          btnConfirmarFinal.disabled = false;
+        }
+      })
+      .catch(() => {
+        // En caso de error o pruebas sin conexión, muestra el resultado visual directamente
+        mostrarPantallaFinal();
+      });
+    });
+
+    function mostrarPantallaFinal() {
+      pantallaComida.style.display = 'none';
+      pantallaFinal.style.display = 'block';
+
+      // Asignar los datos por renglones
+      document.getElementById('resumen-fecha').innerText = `Día: ${fechaElegida}`;
+      document.getElementById('resumen-hora').innerText = `Hora: ${horaElegida}`;
+      
+      // Separar el icono del texto según la opción de comida seleccionada
+      let iconoComida = "🍽️";
+      if (comidaElegida.includes("Sushi")) iconoComida = "🍣";
+      else if (comidaElegida.includes("Pizza")) iconoComida = "🍕";
+      else if (comidaElegida.includes("Hamburguesa")) iconoComida = "🍔";
+      else if (comidaElegida.includes("Pasta")) iconoComida = "🍝";
+      else if (comidaElegida.includes("Eliges tú")) iconoComida = "🔮";
+
+      document.getElementById('resumen-icono-comida').innerText = iconoComida;
+      document.getElementById('resumen-comida').innerText = `Comida: ${comidaElegida}`;
+    }
+  </script>
+
+</body>
+</html>
